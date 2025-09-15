@@ -62,6 +62,10 @@ module "daily_backup_policy" {
 
   # Переопределяем только необходимые параметры
   name = "my-daily-backup-policy"
+  
+  create_policy_binding = true
+
+  policy_binding_instance_id = module.yandex_compute_instance.instance_id
 
   scheduling = {
     enabled              = true
