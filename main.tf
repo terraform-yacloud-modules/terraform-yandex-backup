@@ -1,5 +1,3 @@
-# main.tf - основной файл модуля, описывающий ресурс yandex_backup_policy
-
 resource "yandex_backup_policy" "backup_policy" {
   name                              = var.name
   archive_name                      = var.archive_name
@@ -59,5 +57,23 @@ resource "yandex_backup_policy" "backup_policy" {
     enabled      = var.vm_snapshot_reattempts.enabled
     interval     = var.vm_snapshot_reattempts.interval
     max_attempts = var.vm_snapshot_reattempts.max_attempts
+  }
+}
+
+# Ресурс для привязки политики резервного копирования к ВМ
+resource "yandex_backup_policy_bindings" "policy_binding" {
+  count = var.create_policy_binding ? 1 : 0
+
+  instance_id = var.policy_binding_instance_id
+  policy_id   = yandex_backup_policy.backup_policy.id
+
+  dynamic "timeouts" {
+    for_each = var.policy_binding_timeouts != null ? [var.policy_binding_timeouts] : []
+    content {
+      create = lookup(timeouts.value, "create", null)
+      read   = lookup(timeouts.value, "read", null)
+      update = lookup(timeouts.value, "update", null)
+      delete = lookup(timeouts.value, "delete", null)
+    }
   }
 }

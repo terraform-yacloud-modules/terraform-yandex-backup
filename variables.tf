@@ -1,5 +1,3 @@
-# variables.tf - файл для определения входных переменных модуля
-
 variable "name" {
   description = "Имя политики резервного копирования. Обязательный параметр."
   type        = string
@@ -162,4 +160,27 @@ variable "vm_snapshot_reattempts" {
     interval     = "1m"
     max_attempts = 10
   }
+}
+
+variable "create_policy_binding" {
+  description = "Флаг для создания привязки политики к ВМ."
+  type        = bool
+  default     = false
+}
+
+variable "policy_binding_instance_id" {
+  description = "ID экземпляра Compute Cloud для привязки политики."
+  type        = string
+  default     = null
+}
+
+variable "policy_binding_timeouts" {
+  description = "Настройки таймаутов для привязки политики."
+  type = object({
+    create = optional(string)
+    read   = optional(string)
+    update = optional(string)
+    delete = optional(string)
+  })
+  default = null
 }
