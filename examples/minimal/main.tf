@@ -30,14 +30,20 @@ module "yandex_compute_instance" {
   ssh_user         = "ubuntu"
   ssh_pubkey       = "~/.ssh/id_rsa.pub"
 
+  service_account_id = module.iam_accounts.id
+
   user_data = <<-EOF
         #cloud-config
         package_upgrade: true
         packages:
           - nginx
+          - curl
+          - perl
+          - jq
         runcmd:
           - [systemctl, start, nginx]
           - [systemctl, enable, nginx]
+          - curl https://storage.yandexcloud.net/backup-distributions/agent_installer.sh | sudo bash
         EOF
 }
 
@@ -91,3 +97,4 @@ module "daily_backup_policy" {
     ]
   }
 }
+
