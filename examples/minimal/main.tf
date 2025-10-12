@@ -96,5 +96,14 @@ module "daily_backup_policy" {
       }
     ]
   }
+
+  file_filters = {
+    inclusion_masks = ["/var/www/**", "/etc/nginx/**"]
+    exclusion_masks = ["*.log", "*.tmp"]
+  }
+  validation_enabled = true
+  
+  # Новые параметры
+  lvm_snapshotting_enabled = true
 }
 

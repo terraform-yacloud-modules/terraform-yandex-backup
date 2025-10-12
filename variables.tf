@@ -79,6 +79,50 @@ variable "vss_provider" {
   }
 }
 
+variable "folder_id" {
+  description = "Идентификатор каталога, к которому принадлежит ресурс. Если не указан, используется folder_id провайдера по умолчанию."
+  type        = string
+  default     = null
+}
+
+variable "file_filters" {
+  description = "Фильтры файлов для указания масок файлов для резервного копирования или исключения."
+  type = object({
+    exclusion_masks = optional(list(string), [])
+    inclusion_masks = optional(list(string), [])
+  })
+  default = null
+}
+
+variable "lvm_snapshotting_enabled" {
+  description = "Будет ли LVM использоваться для создания снимка тома."
+  type        = bool
+  default     = false
+}
+
+variable "sector_by_sector" {
+  description = "Посекторное резервное копирование диска или тома."
+  type        = bool
+  default     = false
+}
+
+variable "validation_enabled" {
+  description = "Включена ли проверка резервных копий."
+  type        = bool
+  default     = false
+}
+
+variable "timeouts" {
+  description = "Настройки таймаутов для ресурса политики резервного копирования."
+  type = object({
+    create = optional(string)
+    read   = optional(string)
+    update = optional(string)
+    delete = optional(string)
+  })
+  default = null
+}
+
 variable "reattempts" {
   description = "Параметры повторения операций резервного копирования в случае сбоев."
   type = object({
