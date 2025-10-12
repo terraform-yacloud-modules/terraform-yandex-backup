@@ -5,11 +5,23 @@ resource "yandex_backup_policy" "backup_policy" {
   compression                       = var.compression
   fast_backup_enabled               = var.fast_backup_enabled
   format                            = var.format
+  folder_id                         = local.folder_id
+  lvm_snapshotting_enabled          = var.lvm_snapshotting_enabled
   multi_volume_snapshotting_enabled = var.multi_volume_snapshotting_enabled
   performance_window_enabled        = var.performance_window_enabled
+  sector_by_sector                  = var.sector_by_sector
   silent_mode_enabled               = var.silent_mode_enabled
   splitting_bytes                   = var.splitting_bytes
+  validation_enabled                = var.validation_enabled
   vss_provider                      = var.vss_provider
+
+  dynamic "file_filters" {
+    for_each = var.file_filters != null ? [var.file_filters] : []
+    content {
+      exclusion_masks = lookup(file_filters.value, "exclusion_masks", [])
+      inclusion_masks = lookup(file_filters.value, "inclusion_masks", [])
+    }
+  }
 
   reattempts {
     enabled      = var.reattempts.enabled
@@ -57,6 +69,16 @@ resource "yandex_backup_policy" "backup_policy" {
     enabled      = var.vm_snapshot_reattempts.enabled
     interval     = var.vm_snapshot_reattempts.interval
     max_attempts = var.vm_snapshot_reattempts.max_attempts
+  }
+
+  dynamic "timeouts" {
+    for_each = var.timeouts != null ? [var.timeouts] : []
+    content {
+      create = lookup(timeouts.value, "create", null)
+      read   = lookup(timeouts.value, "read", null)
+      update = lookup(timeouts.value, "update", null)
+      delete = lookup(timeouts.value, "delete", null)
+    }
   }
 }
 
