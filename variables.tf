@@ -10,12 +10,12 @@ variable "archive_name" {
 }
 
 variable "cbt" {
-  description = "Конфигурация отслеживания содержимого резервных копий (CHANGED_BLOCK_TRACKING_UNSPECIFIED, USE_IF_ENABLED, ENABLE_AND_USE, DO_NOT_USE)."
+  description = "Конфигурация отслеживания содержимого резервных копий (USE_IF_ENABLED, ENABLE_AND_USE, DO_NOT_USE)."
   type        = string
-  default     = "USE_IF_ENABLED"
+  default     = "DO_NOT_USE"
   validation {
-    condition     = contains(["CHANGED_BLOCK_TRACKING_UNSPECIFIED", "USE_IF_ENABLED", "ENABLE_AND_USE", "DO_NOT_USE"], var.cbt)
-    error_message = "Допустимые значения для cbt: CHANGED_BLOCK_TRACKING_UNSPECIFIED, USE_IF_ENABLED, ENABLE_AND_USE, DO_NOT_USE."
+    condition     = contains(["USE_IF_ENABLED", "ENABLE_AND_USE", "DO_NOT_USE"], var.cbt)
+    error_message = "Допустимые значения для cbt: USE_IF_ENABLED, ENABLE_AND_USE, DO_NOT_USE."
   }
 }
 
@@ -132,8 +132,8 @@ variable "reattempts" {
   })
   default = {
     enabled      = true
-    interval     = "1m"
-    max_attempts = 10
+    interval     = "5m"
+    max_attempts = 5
   }
 }
 
@@ -167,6 +167,7 @@ variable "scheduling" {
     weekly_backup_day    = string
     backup_sets = list(object({
       type                      = string
+      execute_by_interval       = optional(number)
       include_last_day_of_month = optional(bool, false)
       monthdays                 = optional(list(number))
       months                    = optional(list(number))
@@ -190,6 +191,14 @@ variable "scheduling" {
       }
     ]
   }
+  validation {
+    condition     = contains(["ALWAYS_INCREMENTAL", "ALWAYS_FULL", "WEEKLY_FULL_DAILY_INCREMENTAL", "WEEKLY_INCREMENTAL"], var.scheduling.scheme)
+    error_message = "Допустимые значения для scheme: ALWAYS_INCREMENTAL, ALWAYS_FULL, WEEKLY_FULL_DAILY_INCREMENTAL, WEEKLY_INCREMENTAL."
+  }
+  validation {
+    condition     = contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.scheduling.weekly_backup_day)
+    error_message = "Допустимые значения для weekly_backup_day: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY."
+  }
 }
 
 variable "vm_snapshot_reattempts" {
@@ -201,8 +210,8 @@ variable "vm_snapshot_reattempts" {
   })
   default = {
     enabled      = true
-    interval     = "1m"
-    max_attempts = 10
+    interval     = "5m"
+    max_attempts = 5
   }
 }
 
