@@ -66,13 +66,34 @@ module "daily_backup_policy" {
   # Путь к папке с файлами модуля
   source = "../.."
 
-  # Переопределяем только необходимые параметры
+  # Обязательные параметры
   name = "my-daily-backup-policy"
 
+
+  # Привязка политики к ВМ
   create_policy_binding = true
 
   policy_binding_instance_id = module.yandex_compute_instance.instance_id
 
+  archive_name                      = "[Machine Name]-[Plan ID]-[Unique ID]a"
+  cbt                               = "DO_NOT_USE"
+  compression                       = "NORMAL"
+  fast_backup_enabled               = true
+  format                            = "AUTO"
+  multi_volume_snapshotting_enabled = true
+  performance_window_enabled        = false
+  silent_mode_enabled               = true
+  splitting_bytes                   = "9223372036854775807"
+  vss_provider                      = "NATIVE"
+
+  # Параметры повторных попыток
+  reattempts = {
+    enabled      = true
+    interval     = "5m"
+    max_attempts = 5
+  }
+
+  # Параметры расписания
   scheduling = {
     enabled              = true
     max_parallel_backups = 2
@@ -87,6 +108,7 @@ module "daily_backup_policy" {
     ]
   }
 
+  # Параметры хранения
   retention = {
     after_backup = true
     rules = [
@@ -97,12 +119,23 @@ module "daily_backup_policy" {
     ]
   }
 
+  # Параметры повторных попыток снапшотов ВМ
+  vm_snapshot_reattempts = {
+    enabled      = true
+    interval     = "5m"
+    max_attempts = 5
+  }
+
+  # Фильтры файлов
   file_filters = {
     inclusion_masks = ["/var/www/**", "/etc/nginx/**"]
     exclusion_masks = ["*.log", "*.tmp"]
   }
+
+  # Дополнительные параметры
+
+  sector_by_sector   = false
   validation_enabled = true
 
-  # Новые параметры
   lvm_snapshotting_enabled = true
 }
