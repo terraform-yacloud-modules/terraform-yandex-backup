@@ -138,4 +138,16 @@ module "daily_backup_policy" {
   validation_enabled = true
 
   lvm_snapshotting_enabled = true
+
+  timeouts = {
+    create = "30m"
+    update = "10m"
+    delete = "10m"
+    read   = "5m"
+  }
+
+  policy_binding_timeouts = {
+    create = "10m"
+    delete = "5m"
+  }
 }
