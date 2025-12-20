@@ -14,6 +14,8 @@ resource "yandex_backup_policy" "backup_policy" {
   splitting_bytes                   = var.splitting_bytes
   validation_enabled                = var.validation_enabled
   vss_provider                      = var.vss_provider
+  preserve_file_security_settings   = var.preserve_file_security_settings
+  quiesce_snapshotting_enabled      = var.quiesce_snapshotting_enabled
 
   dynamic "file_filters" {
     for_each = var.file_filters != null ? [var.file_filters] : []
@@ -53,14 +55,14 @@ resource "yandex_backup_policy" "backup_policy" {
       for_each = var.scheduling.backup_sets
       content {
         execute_by_time {
-          type                      = lookup(backup_sets.value, "type", null)
-          include_last_day_of_month = lookup(backup_sets.value, "include_last_day_of_month", false)
-          monthdays                 = lookup(backup_sets.value, "monthdays", [])
-          months                    = lookup(backup_sets.value, "months", [])
-          repeat_at                 = lookup(backup_sets.value, "repeat_at", [])
-          repeat_every              = lookup(backup_sets.value, "repeat_every", null)
-          weekdays                  = lookup(backup_sets.value, "weekdays", [])
-        }
+            type                      = lookup(backup_sets.value, "type", null)
+            include_last_day_of_month = lookup(backup_sets.value, "include_last_day_of_month", false)
+            monthdays                 = lookup(backup_sets.value, "monthdays", [])
+            months                    = lookup(backup_sets.value, "months", [])
+            repeat_at                 = lookup(backup_sets.value, "repeat_at", [])
+            repeat_every              = lookup(backup_sets.value, "repeat_every", null)
+            weekdays                  = lookup(backup_sets.value, "weekdays", [])
+                  }
       }
     }
   }

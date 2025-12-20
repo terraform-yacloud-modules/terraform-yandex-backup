@@ -112,6 +112,18 @@ variable "validation_enabled" {
   default     = false
 }
 
+variable "preserve_file_security_settings" {
+  description = "Сохранение настроек безопасности файлов (устаревший параметр)."
+  type        = bool
+  default     = true
+}
+
+variable "quiesce_snapshotting_enabled" {
+  description = "Создание снимка виртуальной машины в состоянии покоя (устаревший параметр)."
+  type        = bool
+  default     = true
+}
+
 variable "timeouts" {
   description = "Настройки таймаутов для ресурса политики резервного копирования."
   type = object({
