@@ -28,7 +28,7 @@ module "yandex_compute_instance" {
   hostname         = "instance"
   generate_ssh_key = false
   ssh_user         = "ubuntu"
-  ssh_pubkey       = "~/.ssh/id_rsa.pub"
+  ssh_pubkey       = "~/.ssh/id_ed25519.pub"
 
   service_account_id = module.iam_accounts.id
 

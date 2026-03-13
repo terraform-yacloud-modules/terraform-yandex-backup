@@ -52,14 +52,22 @@ resource "yandex_backup_policy" "backup_policy" {
     dynamic "backup_sets" {
       for_each = var.scheduling.backup_sets
       content {
-        execute_by_time {
-          type                      = lookup(backup_sets.value, "type", null)
-          include_last_day_of_month = lookup(backup_sets.value, "include_last_day_of_month", false)
-          monthdays                 = lookup(backup_sets.value, "monthdays", [])
-          months                    = lookup(backup_sets.value, "months", [])
-          repeat_at                 = lookup(backup_sets.value, "repeat_at", [])
-          repeat_every              = lookup(backup_sets.value, "repeat_every", null)
-          weekdays                  = lookup(backup_sets.value, "weekdays", [])
+        type = coalesce(lookup(backup_sets.value, "backup_set_type", null), "TYPE_AUTO")
+
+        execute_by_interval = lookup(backup_sets.value, "execute_by_interval", null)
+
+        dynamic "execute_by_time" {
+          for_each = lookup(backup_sets.value, "execute_by_interval", null) != null ? [] : [1]
+          content {
+            type                      = lookup(backup_sets.value, "type", null)
+            include_last_day_of_month = lookup(backup_sets.value, "include_last_day_of_month", false)
+            monthdays                 = lookup(backup_sets.value, "monthdays", [])
+            months                    = lookup(backup_sets.value, "months", [])
+            repeat_at                 = lookup(backup_sets.value, "repeat_at", [])
+            repeat_every              = lookup(backup_sets.value, "repeat_every", null)
+            weekdays                  = lookup(backup_sets.value, "weekdays", [])
+            run_later                 = lookup(backup_sets.value, "run_later", false)
+          }
         }
       }
     }

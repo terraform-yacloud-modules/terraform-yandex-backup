@@ -166,14 +166,16 @@ variable "scheduling" {
     scheme               = string
     weekly_backup_day    = string
     backup_sets = list(object({
-      type                      = string
-      execute_by_interval       = optional(number)
+      backup_set_type           = optional(string, "TYPE_AUTO") # TYPE_AUTO, TYPE_FULL, TYPE_INCREMENTAL, TYPE_DIFFERENTIAL
+      type                      = string                        # HOURLY, DAILY, WEEKLY, MONTHLY (schedule type for execute_by_time)
+      execute_by_interval       = optional(number)              # interval in seconds; use instead of execute_by_time when set
       include_last_day_of_month = optional(bool, false)
       monthdays                 = optional(list(number))
       months                    = optional(list(number))
       repeat_at                 = optional(list(string))
       repeat_every              = optional(string)
       weekdays                  = optional(list(string))
+      run_later                 = optional(bool, false) # launch missed tasks on boot if machine was off
     }))
   })
   default = {
@@ -198,6 +200,13 @@ variable "scheduling" {
   validation {
     condition     = contains(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"], var.scheduling.weekly_backup_day)
     error_message = "Допустимые значения для weekly_backup_day: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY."
+  }
+  validation {
+    condition = alltrue([
+      for bs in var.scheduling.backup_sets :
+      contains(["TYPE_AUTO", "TYPE_FULL", "TYPE_INCREMENTAL", "TYPE_DIFFERENTIAL"], coalesce(bs.backup_set_type, "TYPE_AUTO"))
+    ])
+    error_message = "Допустимые значения для backup_set_type: TYPE_AUTO, TYPE_FULL, TYPE_INCREMENTAL, TYPE_DIFFERENTIAL."
   }
 }
 
