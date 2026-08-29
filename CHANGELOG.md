@@ -1,3 +1,7 @@
+## v0.2.0 - 2026-08-29
+### Miscellaneous
+- 9498017 Bump actions/cache from 5.0.3 to 5.0.5 ([#9](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/9))
+
 ## v0.1.0 - 2026-03-14
 ### Miscellaneous
 - 7f592ef add backup_set_type, interval, run_later ([#7](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/7))
