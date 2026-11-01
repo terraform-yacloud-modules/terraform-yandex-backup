@@ -1,3 +1,7 @@
+## v0.4.0 - 2026-11-01
+### Chores
+- efff5da chore(deps): bump actions/cache from 5.0.5 to 6.1.0 ([#11](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/11))
+
 ## v0.3.0 - 2026-09-02
 ### Bug Fixes
 - b1e9aab fix: передача folder_id в примере с приоритетом tfvars над YC_FOLDER_ID
