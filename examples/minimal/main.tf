@@ -98,8 +98,11 @@ module "daily_backup_policy" {
 
   # Параметры расписания
   scheduling = {
-    enabled              = true
-    max_parallel_backups = 2
+    enabled = true
+    # Cloud Backup API не сохраняет max_parallel_backups: любое ненулевое
+    # значение возвращается как 0 и даёт постоянный diff в terraform plan.
+    # 0 — без ограничения на параллельные бэкапы.
+    max_parallel_backups = 0
     random_max_delay     = "15m"
     scheme               = "ALWAYS_INCREMENTAL"
     weekly_backup_day    = "MONDAY" # не используется в DAILY, но должен быть указан
