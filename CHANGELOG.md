@@ -1,3 +1,7 @@
+## v0.6.0 - 2026-11-10
+### Bug Fixes
+- 6475177 fix: убрать постоянный diff в примере minimal и поднять версию провайдера ([#13](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/13))
+
 ## v0.5.0 - 2026-11-07
 ### Chores
 - 05517ab chore(deps): bump actions/checkout from 6 to 7 ([#12](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/12))
