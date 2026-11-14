@@ -1,3 +1,7 @@
+## v0.7.0 - 2026-11-14
+### Features
+- 44cda60 feat: bind one backup policy to multiple instances and add complete example ([#14](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/14))
+
 ## v0.6.0 - 2026-11-10
 ### Bug Fixes
 - 6475177 fix: убрать постоянный diff в примере minimal и поднять версию провайдера ([#13](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/13))
