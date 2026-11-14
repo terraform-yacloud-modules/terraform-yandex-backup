@@ -236,6 +236,31 @@ variable "policy_binding_instance_id" {
   default     = null
 }
 
+variable "create_multiple_policy_bindings" {
+  description = "Флаг для привязки политики к нескольким ВМ из policy_binding_instance_ids."
+  type        = bool
+  default     = false
+}
+
+variable "policy_binding_instance_ids" {
+  description = "Список ID экземпляров Compute Cloud для привязки одной политики к нескольким ВМ. Используется при create_multiple_policy_bindings = true."
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for instance_id in var.policy_binding_instance_ids : length(trimspace(instance_id)) > 0])
+    error_message = "Идентификаторы экземпляров в policy_binding_instance_ids не должны быть пустыми."
+  }
+  validation {
+    condition     = length(var.policy_binding_instance_ids) == length(distinct(var.policy_binding_instance_ids))
+    error_message = "policy_binding_instance_ids не должен содержать повторяющиеся идентификаторы."
+  }
+  validation {
+    condition     = var.policy_binding_instance_id == null ? true : !contains(var.policy_binding_instance_ids, var.policy_binding_instance_id)
+    error_message = "policy_binding_instance_ids не должен содержать значение из policy_binding_instance_id."
+  }
+}
+
 variable "policy_binding_timeouts" {
   description = "Настройки таймаутов для привязки политики."
   type = object({

@@ -15,12 +15,9 @@ resource "yandex_backup_policy" "backup_policy" {
   validation_enabled                = var.validation_enabled
   vss_provider                      = var.vss_provider
 
-  dynamic "file_filters" {
-    for_each = var.file_filters != null ? [var.file_filters] : []
-    content {
-      exclusion_masks = lookup(file_filters.value, "exclusion_masks", [])
-      inclusion_masks = lookup(file_filters.value, "inclusion_masks", [])
-    }
+  file_filters {
+    exclusion_masks = try(var.file_filters.exclusion_masks, [])
+    inclusion_masks = try(var.file_filters.inclusion_masks, [])
   }
 
   reattempts {
@@ -90,11 +87,31 @@ resource "yandex_backup_policy" "backup_policy" {
   }
 }
 
-# Ресурс для привязки политики резервного копирования к ВМ
+# Ресурс для привязки политики резервного копирования к одной ВМ
 resource "yandex_backup_policy_bindings" "policy_binding" {
   count = var.create_policy_binding ? 1 : 0
 
   instance_id = var.policy_binding_instance_id
+  policy_id   = yandex_backup_policy.backup_policy.id
+
+  dynamic "timeouts" {
+    for_each = var.policy_binding_timeouts != null ? [var.policy_binding_timeouts] : []
+    content {
+      create = lookup(timeouts.value, "create", null)
+      read   = lookup(timeouts.value, "read", null)
+      update = lookup(timeouts.value, "update", null)
+      delete = lookup(timeouts.value, "delete", null)
+    }
+  }
+}
+
+# Ресурс для привязки одной политики к нескольким ВМ.
+# Список не должен пересекаться с policy_binding_instance_id — иначе к одной ВМ
+# будет создано две привязки.
+resource "yandex_backup_policy_bindings" "policy_bindings" {
+  count = var.create_multiple_policy_bindings ? length(var.policy_binding_instance_ids) : 0
+
+  instance_id = var.policy_binding_instance_ids[count.index]
   policy_id   = yandex_backup_policy.backup_policy.id
 
   dynamic "timeouts" {
