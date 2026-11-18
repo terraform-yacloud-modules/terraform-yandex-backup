@@ -1,3 +1,7 @@
+## v0.8.0 - 2026-11-18
+### Miscellaneous
+- 320635f ci: run semver job only on push to main ([#15](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/15))
+
 ## v0.7.0 - 2026-11-14
 ### Features
 - 44cda60 feat: bind one backup policy to multiple instances and add complete example ([#14](https://github.com/terraform-yacloud-modules/terraform-yandex-backup/pull/14))
